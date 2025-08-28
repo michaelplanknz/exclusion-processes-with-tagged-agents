@@ -5,7 +5,7 @@ This repository contains the code used for the article Continuum models describi
 Results in the preprint were produced using the version of this repository tagged v1.0. 
 
 
-# Structure of the repository
+## Structure of the repository
 
 The repository is organised into the following folders:
 * `code/` contains the all Matlab code used to run the model.
@@ -13,7 +13,7 @@ The repository is organised into the following folders:
 * `figures/` contains the figures that appear in the article.
 
 
-# How to use the repository
+## How to use the repository
 
 To run the model and reproduce the figures that appear in the article:
 1. Navigate to the `code/` directory.
