@@ -25,7 +25,7 @@ for iCase = 1:nCases
     par.r = rArr(iCase);
     
     h = figure(iCase); 
-    h.Position = [  1996         713        1180         380];
+    h.Position = [  60         550        1180         380];
     tiledlayout(1, 2, 'TileSpacing', 'compact');
     nexttile;
     hold on
