@@ -49,8 +49,12 @@ ABM_results.x = -par.xMax:par.xMax;
 % Mean of macroscopic agents density across simulations
 ABM_results.Um = mean(U);
 
-% Density function for tagged agent locations across simulations (one row for each tag set)
+% Density function for tagged agent locations across simulations (one row
+% for each tag set) - calculate by summing column conunts over reps and
+% then normalising
 ABM_results.Pm = squeeze(sum(P, 1)./sum(sum(P, 1), 2))';
 
 % Store nAgents in output structure
 ABM_results.meanAgents = mean(nAgents);
+
+
