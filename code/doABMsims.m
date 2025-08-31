@@ -10,8 +10,9 @@ function ABM_results = doABMsims(nReps, par)
 % OUTPUTS: ABM_results - stucture of results containing the following
 % fiels:
 %          ABM_results.x - row vector of x coordinates
-%          ABM_results.Um - corresponding row vector of mean agent
-%          densities at simulation end time
+%          ABM_results.t - row vector of time points
+%          ABM_results.Um - row vector of mean agent
+%          densities at each x value at simulation end time
 %$         ABM_results.Pm - array whose (i,j) element is the estmiated PDF
 %for tagged agent location for tag set i and location j
 %          ABM_results.meanAgents = row vector with the mean number of agents at each time step
@@ -51,8 +52,9 @@ for iRep = 1:nReps
     xTagged(iRep, :, :, :) = simResults.xTagged;
 end
 
-% Grid of lattice site coorindates
+% Grid of lattice site coorindates and time point
 ABM_results.x = -par.xMax:par.xMax;
+ABM_results.t = 0:par.tMax;
 
 % Mean of macroscopic agents density across simulations
 ABM_results.Um = mean(U);
