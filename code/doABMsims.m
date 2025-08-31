@@ -3,6 +3,18 @@ function ABM_results = doABMsims(nReps, par)
 % Function to run ABM simulations
 %
 % USAGE: ABM_results = doABMsims(nReps, par)
+%
+% INPUTS: nReps - number of independent realisations of the ABM to do
+%         par - parameter structure as defined in main
+% 
+% OUTPUTS: ABM_results - stucture of results containing the following
+% fiels:
+%          ABM_results.x - row vector of x coordinates
+%          ABM_results.Um - corresponding row vector of mean agent
+%          densities at simulation end time
+%$         ABM_results.Pm - array whose (i,j) element is the estmiated PDF
+%for tagged agent location for tag set i and location j
+%          ABM_results.meanAgents = row vector with the mean number of agents at each time step
 
 
 % Number of lattice sites in horizontal direction
