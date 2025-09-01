@@ -101,7 +101,11 @@ for iCase = 1:nCases
          leg_string(iTagSet+nTagSets) = sprintf('PDE x0=%.0f', par.xTag(iTagSet));
     end
     legend(leg_string, 'location', 'eastoutside')
+
+    figName = sprintf('case%i_fig2.png', iCase);
+    saveas(h, figFolder+figName);
     
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Plot median and quantiles of tagged agent location over time
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,7 +134,8 @@ for iCase = 1:nCases
     grid on
     lgd = legend('Location', 'eastoutside');
 
-
+    figName = sprintf('case%i_fig3.png', iCase);
+    saveas(h, figFolder+figName);
 
 end
 
