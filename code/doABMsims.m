@@ -37,7 +37,7 @@ nAgents = zeros(nReps, par.tMax+1);
 xTagged = nan(nReps, nTagSets, par.nTagged, par.tMax+1);
 
 % Do nReps independent simulations of the ABM
-for iRep = 1:nReps
+parfor iRep = 1:nReps
     fprintf('  Sim %i/%i\n', iRep, nReps)
     
     % Run ABM simulation model

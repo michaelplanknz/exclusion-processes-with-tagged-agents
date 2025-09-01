@@ -9,10 +9,16 @@ function pdeResults = solvePDE(dx, par)
 %
 % OUTPUTS: pdeResults - structure of results with the following fields
 %          pdeResults.x - row vector of x coordinates
-%          pdeResults.u - corresponding row vector of u (macroscopic density) at final
-%          time point
-%          pdeResults.p - corresponding row vector of p (tagged agent
-%          location distribution) at final time point
+%          pdeResults.t - row vector of time points
+%          pdeResults.u - corresponding row vector of u (macroscopic density) at final time point
+%          pdeResults.p - array whose (i.j) element is the solution for p (tagged agent
+%          location distribution) for tag set i at location j at final time point
+%          pdeResults.xMean - array whose (i,j) element is the mean location of tagged agents in tag set i at time point j
+%          pdeResults.xSD - corresponding results for std. dev. of tagged agent locations
+%          pdeResults.xMed - corresponding results for median of tagged agent locations
+%          pdeResults.xq5 - corresponding results for 5th quantile of tagged agent locations
+%          pdeResults.xq95 - corresponding results for 95th quantile of tagged agent locations
+
 
 % Tolerance for checking differences between solutions for u for different
 % tag sets
@@ -34,7 +40,7 @@ u = zeros(nTagSets, nPoints);
 p = zeros(nTagSets, nPoints);
 
 % Loop through tagged agent sets
-parfor iTagSet = 1:nTagSets
+for iTagSet = 1:nTagSets
 
     % Set IC for p for this starting location (+/- 0.5 for size of lattice
     % site)
@@ -57,13 +63,35 @@ parfor iTagSet = 1:nTagSets
         % Solve PDE
         [t, Y] = ode45(@(t, y)myRHS(t, y, x, par) , tSpan, IC );
 
+        % Split solution array Y into its component parts
+        Ut = Y(:, 1:nPoints);
+        Pt = Y(:, nPoints+1:end);
+
         % Extract solution for u and p at final time point
-        u(iTagSet, :) = Y(end, 1:nPoints);
-        p(iTagSet, :) = Y(end, nPoints+1:end);
+        u(iTagSet, :) = Ut(end, :);
+        p(iTagSet, :) = Pt(end, :);
+
+        % Calculate time-dependent solutions for mean, s.d. and quantiles
+        % of P
+        xMean(iTagSet, :) = sum(x.*Pt, 2)';
+        xSD(iTagSet, :) = sqrt(sum(x.^2.*Pt, 2)' - xMean(iTagSet, :).^2);
+        CDF = cumsum(Pt, 2);
+        xqs = getQuantFromCumulative(x, CDF, [0.05, 0.5, 0.95]);
+        xq5(iTagSet, :) = xqs(:, 1)';
+        xMed(iTagSet, :) = xqs(:, 2)';
+        xq95(iTagSet, :) = xqs(:, 3)';
+
     else
         % If tMax=0 just store initial condition for plotting
         u(iTagSet, :) = u0;
         p(iTagSet, :) = p0;
+        xMean(iTagSet, :) = sum(x.*p0, 2)';
+        xSD(iTagSet, :) = sqrt(sum(x.^2.*u0, 2)' - xMean(iTagSet, :).^2);
+        CDF = cumsum(p0, 2);
+        xqs = getQuantFromCumulative(x, CDF, [0.05, 0.5, 0.95]);
+        xq5(iTagSet, :) = xqs(:, 1)';
+        xMed(iTagSet, :) = xqs(:, 2)';
+        xq95(iTagSet, :) = xqs(:, 3)';
     end
 end
 
@@ -82,5 +110,10 @@ end
 pdeResults.x = x;
 pdeResults.p = p;
 pdeResults.u = u(1, :);
+pdeResults.xMean = xMean;
+pdeResults.xSD = xSD;
+pdeResults.xMed = xMed;
+pdeResults.xq5 = xq5;
+pdeResults.xq95 = xq95;
 
 
