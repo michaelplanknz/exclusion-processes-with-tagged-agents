@@ -73,8 +73,8 @@ for iTagSet = 1:nTagSets
 
         % Calculate time-dependent solutions for mean, s.d. and quantiles
         % of P
-        xMean(iTagSet, :) = sum(x.*Pt, 2)';
-        xSD(iTagSet, :) = sqrt(sum(x.^2.*Pt, 2)' - xMean(iTagSet, :).^2);
+        xMean(iTagSet, :) = dx*sum(x.*Pt, 2)';
+        xSD(iTagSet, :) = sqrt(dx*sum(x.^2.*Pt, 2)' - xMean(iTagSet, :).^2);
         CDF = cumsum(Pt, 2);
         xqs = getQuantFromCumulative(x, CDF, [0.05, 0.5, 0.95]);
         xq5(iTagSet, :) = xqs(:, 1)';
@@ -85,8 +85,8 @@ for iTagSet = 1:nTagSets
         % If tMax=0 just store initial condition for plotting
         u(iTagSet, :) = u0;
         p(iTagSet, :) = p0;
-        xMean(iTagSet, :) = sum(x.*p0, 2)';
-        xSD(iTagSet, :) = sqrt(sum(x.^2.*u0, 2)' - xMean(iTagSet, :).^2);
+        xMean(iTagSet, :) = dx*sum(x.*p0, 2)';
+        xSD(iTagSet, :) = sqrt(dx*sum(x.^2.*p0, 2)' - xMean(iTagSet, :).^2);
         CDF = cumsum(p0, 2);
         xqs = getQuantFromCumulative(x, CDF, [0.05, 0.5, 0.95]);
         xq5(iTagSet, :) = xqs(:, 1)';
