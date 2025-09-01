@@ -75,7 +75,7 @@ for iTagSet = 1:nTagSets
         % of P
         xMean(iTagSet, :) = dx*sum(x.*Pt, 2)';
         xSD(iTagSet, :) = sqrt(dx*sum(x.^2.*Pt, 2)' - xMean(iTagSet, :).^2);
-        CDF = cumsum(Pt, 2);
+        CDF = dx*cumsum(Pt, 2);
         xqs = getQuantFromCumulative(x, CDF, [0.05, 0.5, 0.95]);
         xq5(iTagSet, :) = xqs(:, 1)';
         xMed(iTagSet, :) = xqs(:, 2)';
@@ -108,6 +108,7 @@ end
 % Store results in structure for output (just keeping one of the solutions
 % of u as they should all be the same)
 pdeResults.x = x;
+pdeResults.t = t;
 pdeResults.p = p;
 pdeResults.u = u(1, :);
 pdeResults.xMean = xMean;
