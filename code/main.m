@@ -25,7 +25,7 @@ vArr = [0,  0.1, 0,     0.1];         % Advection velocity (used to calculate le
 rArr = [0,  0,   0.025  0.025];       % Proliferation rate
 
 % Numerical settings 
-nReps = 50;       % Number of repeat simulations to do
+nReps = 5000;       % Number of repeat simulations to do
 dx = 0.1;           % Grid size for PDE
 
 % Location to save results

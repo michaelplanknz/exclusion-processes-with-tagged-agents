@@ -39,8 +39,11 @@ nTagSets = length(par.xTag);
 u = zeros(nTagSets, nPoints);
 p = zeros(nTagSets, nPoints);
 
+% Set time span for PDE solution
+tSpan = 0:1:par.tMax;
+
 % Loop through tagged agent sets
-for iTagSet = 1:nTagSets
+parfor iTagSet = 1:nTagSets
 
     % Set IC for p for this starting location (+/- 0.5 for size of lattice
     % site)
@@ -57,11 +60,9 @@ for iTagSet = 1:nTagSets
 
         fprintf('  Solving PDE %i/%i...  \n', iTagSet, nTagSets)
 
-        % Set time span for PDE solution
-        tSpan = 0:1:par.tMax;
-        
         % Solve PDE
-        [t, Y] = ode45(@(t, y)myRHS(t, y, x, par) , tSpan, IC );
+        opts = odeset('NonNegative', ones(size(IC)));
+        [~, Y] = ode45(@(t, y)myRHS(t, y, x, par) , tSpan, IC, opts );
 
         % Split solution array Y into its component parts
         Ut = Y(:, 1:nPoints);
@@ -108,7 +109,7 @@ end
 % Store results in structure for output (just keeping one of the solutions
 % of u as they should all be the same)
 pdeResults.x = x;
-pdeResults.t = t;
+pdeResults.t = tSpan;
 pdeResults.p = p;
 pdeResults.u = u(1, :);
 pdeResults.xMean = xMean;
