@@ -30,6 +30,7 @@ nPoints = length(x);
 
 % Set IC for U 
 u0 = par.U0 * (abs(x) < par.x0 + 0.5 );
+%u0 = par.U0 * (abs(x) <= par.x0 );
 
 % Number of sets of tagged agents (each with different starting location)   
 nTagSets = length(par.xTag);
@@ -47,6 +48,7 @@ parfor iTagSet = 1:nTagSets
 
     % Set IC for p for this starting location (+/- 0.5 for size of lattice
     % site)
+    % p0 = abs(x-par.xTag(iTagSet)) <= 0.5;
     p0 = x == par.xTag(iTagSet);
 
     % Normalise to a distribution
@@ -61,7 +63,7 @@ parfor iTagSet = 1:nTagSets
         fprintf('  Solving PDE %i/%i...  \n', iTagSet, nTagSets)
 
         % Solve PDE
-        opts = odeset('NonNegative', ones(size(IC)));
+        opts = odeset('NonNegative', 1:length(IC) );
         [~, Y] = ode45(@(t, y)myRHS(t, y, x, par) , tSpan, IC, opts );
 
         % Split solution array Y into its component parts

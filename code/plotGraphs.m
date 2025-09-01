@@ -1,6 +1,9 @@
 clear
 close all
 
+% Set to true to save figures as .png files
+savePlots = false;
+
 % Location to read results from
 fNameIn = "../results/results.mat";
 
@@ -65,8 +68,10 @@ for iCase = 1:nCases
     end
     legend(leg_string, 'Location', 'northwest')
     
-    figName = sprintf('case%i_fig1.png', iCase);
-    saveas(h, figFolder+figName);
+    if savePlots
+        figName = sprintf('case%i_fig1.png', iCase);
+        saveas(h, figFolder+figName);
+    end
 
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,8 +107,11 @@ for iCase = 1:nCases
     end
     legend(leg_string, 'location', 'eastoutside')
 
-    figName = sprintf('case%i_fig2.png', iCase);
-    saveas(h, figFolder+figName);
+    
+    if savePlots
+        figName = sprintf('case%i_fig2.png', iCase);
+        saveas(h, figFolder+figName);
+    end
     
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -134,8 +142,11 @@ for iCase = 1:nCases
     grid on
     lgd = legend('Location', 'eastoutside');
 
-    figName = sprintf('case%i_fig3.png', iCase);
-    saveas(h, figFolder+figName);
+
+    if savePlots
+        figName = sprintf('case%i_fig3.png', iCase);
+        saveas(h, figFolder+figName);
+    end
 
 end
 

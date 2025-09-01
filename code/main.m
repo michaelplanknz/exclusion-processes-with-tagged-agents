@@ -24,6 +24,9 @@ par.D = 0.25;                                       % Diffusivity
 vArr = [0,  0.1, 0,     0.1];         % Advection velocity (used to calculate left/right probabilities in discrete model)
 rArr = [0,  0,   0.025  0.025];       % Proliferation rate
 
+vArr = vArr(1);
+rArr = rArr(1);
+
 % Numerical settings 
 nReps = 5000;       % Number of repeat simulations to do
 dx = 0.1;           % Grid size for PDE
