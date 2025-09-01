@@ -47,7 +47,7 @@ parfor iTagSet = 1:nTagSets
 
     % Set IC for p for this starting location (+/- 0.5 for size of lattice
     % site)
-    p0 = abs(x-par.xTag(iTagSet)) < 0.5;   
+    p0 = x == par.xTag(iTagSet);
 
     % Normalise to a distribution
     p0 = p0/(dx*sum(p0));
