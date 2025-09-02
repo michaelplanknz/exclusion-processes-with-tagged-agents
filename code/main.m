@@ -16,16 +16,13 @@ par.x0 = 20;       % Width of initially occupied region (-x0 <= x <= x0)
 par.tMax = 300;    % Number of time steps to take
 
 % Tagged agent specification
-par.xTag = [-20, 0, 20];    % Initial x coordinate of tagged agents (can specify multiple values to tag distinct sets of agents starting at different locztions )
+par.xTag = [-20, 0, 15];    % Initial x coordinate of tagged agents (can specify multiple values to tag distinct sets of agents starting at different locztions )
 par.nTagged = 10;                   % Number of agents to tag (per entry in xTag) in each simulation
 
 % Cell behaviour parameters (macroscopic model)
 par.D = 0.25;                                       % Diffusivity 
 vArr = [0,  0.1, 0,     0.1];         % Advection velocity (used to calculate left/right probabilities in discrete model)
 rArr = [0,  0,   0.025  0.025];       % Proliferation rate
-
-vArr = vArr(1);
-rArr = rArr(1);
 
 % Numerical settings 
 nReps = 5000;       % Number of repeat simulations to do

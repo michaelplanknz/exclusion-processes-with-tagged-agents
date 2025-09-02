@@ -44,7 +44,7 @@ for iCase = 1:nCases
     title(sprintf('(a) agent density (t=%i)', par.tMax))
     legend('ABM', 'PDE')
     xlim(xRa)
-    ylim([0 inf])
+    ylim([0 1])
     grid on
     legend(["ABM", "PDE"], 'location', 'northwest')
 
@@ -85,6 +85,8 @@ for iCase = 1:nCases
     plot(ABM_results(iCase).t, ABM_results(iCase).xMean, '-')
     set(gca, 'ColorOrderIndex', 1)
     plot(PDE_results(iCase).t, PDE_results(iCase).xMean, '--' )
+    set(gca, 'ColorOrderIndex', 1)
+    plot(PDE_results(iCase).t, PDE_results(iCase).meanODE, '-.' )
     xlabel('t')
     ylabel('\langle x(t) \rangle')
     title(sprintf('(a) mean tagged agent location'))
@@ -96,6 +98,8 @@ for iCase = 1:nCases
     plot(ABM_results(iCase).t, ABM_results(iCase).xSD, '-')
     set(gca, 'ColorOrderIndex', 1)
     plot(PDE_results(iCase).t, PDE_results(iCase).xSD, '--' )
+    set(gca, 'ColorOrderIndex', 1)
+    plot(PDE_results(iCase).t, PDE_results(iCase).sdODE, '-.' )
     xlabel('t')
     ylabel('\sigma_x(t)')
     title(sprintf('(a) std. dev. of tagged agent location'))
