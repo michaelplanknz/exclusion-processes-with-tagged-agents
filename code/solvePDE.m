@@ -30,23 +30,32 @@ nPoints = length(x);
 
 % Set IC for U 
 u0 = par.U0 * (abs(x) < par.x0 + 0.5 );
+%u0 = par.U0 * (abs(x) <= par.x0 );
 
 % Number of sets of tagged agents (each with different starting location)   
 nTagSets = length(par.xTag);
+
+% Set time span for PDE solution
+tSpan = 0:1:par.tMax;
 
 % Allocate arrays for PDE solutions for u and p (for each tagged agent
 % set)
 u = zeros(nTagSets, nPoints);
 p = zeros(nTagSets, nPoints);
-
-% Set time span for PDE solution
-tSpan = 0:1:par.tMax;
+xMean = zeros(nTagSets, length(tSpan));
+xSD = zeros(nTagSets, length(tSpan));
+xMed = zeros(nTagSets, length(tSpan));
+xq5 = zeros(nTagSets, length(tSpan));
+xq95 = zeros(nTagSets, length(tSpan));
+xODE = zeros(nTagSets, length(tSpan));
+vODE = zeros(nTagSets, length(tSpan));
 
 % Loop through tagged agent sets
-parfor iTagSet = 1:nTagSets
+for iTagSet = 1:nTagSets
 
     % Set IC for p for this starting location (+/- 0.5 for size of lattice
     % site)
+    % p0 = abs(x-par.xTag(iTagSet)) <= 0.5;
     p0 = x == par.xTag(iTagSet);
 
     % Normalise to a distribution
@@ -61,7 +70,7 @@ parfor iTagSet = 1:nTagSets
         fprintf('  Solving PDE %i/%i...  \n', iTagSet, nTagSets)
 
         % Solve PDE
-        opts = odeset('NonNegative', ones(size(IC)));
+        opts = odeset('NonNegative', 1:length(IC) );
         [~, Y] = ode45(@(t, y)myRHS(t, y, x, par) , tSpan, IC, opts );
 
         % Split solution array Y into its component parts
@@ -82,7 +91,20 @@ parfor iTagSet = 1:nTagSets
         xMed(iTagSet, :) = xqs(:, 2)';
         xq95(iTagSet, :) = xqs(:, 3)';
 
-    else
+
+        % Solve the ODEs for mean and variance in Simpson et al 2009
+        % Make a grid of x and t values to allow evaluation of U and dU/dx
+        [Xi, Ti] = meshgrid(x , tSpan);
+        % Initial condition for mean and variance
+        x0 = [par.xTag(iTagSet); 0];
+        % Require variance to be non-negative
+        opts = odeset('NonNegative', 2);
+        % Solve ODEs
+        [~, Y] = ode45(@(t, y)meanVarODEs(t, y, Xi, Ti, Ut, par), tSpan, x0, opts );
+        % Record mean and s.d. over time
+        meanODE(iTagSet, :) = Y(:, 1)';
+        sdODE(iTagSet, :) = sqrt(Y(:, 2)');
+   else
         % If tMax=0 just store initial condition for plotting
         u(iTagSet, :) = u0;
         p(iTagSet, :) = p0;
@@ -93,6 +115,8 @@ parfor iTagSet = 1:nTagSets
         xq5(iTagSet, :) = xqs(:, 1)';
         xMed(iTagSet, :) = xqs(:, 2)';
         xq95(iTagSet, :) = xqs(:, 3)';
+        meanODE(iTagSet, :) = par.xTag(iTagSet);
+        sdODE(iTagSet, :) = 0;
     end
 end
 
@@ -118,4 +142,6 @@ pdeResults.xMed = xMed;
 pdeResults.xq5 = xq5;
 pdeResults.xq95 = xq95;
 
+pdeResults.meanODE = meanODE;
+pdeResults.sdODE = sdODE;
 

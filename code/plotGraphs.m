@@ -1,6 +1,9 @@
 clear
 close all
 
+% Set to true to save figures as .png files
+savePlots = false;
+
 % Location to read results from
 fNameIn = "../results/results.mat";
 
@@ -41,7 +44,7 @@ for iCase = 1:nCases
     title(sprintf('(a) agent density (t=%i)', par.tMax))
     legend('ABM', 'PDE')
     xlim(xRa)
-    ylim([0 inf])
+    ylim([0 1])
     grid on
     legend(["ABM", "PDE"], 'location', 'northwest')
 
@@ -65,8 +68,10 @@ for iCase = 1:nCases
     end
     legend(leg_string, 'Location', 'northwest')
     
-    figName = sprintf('case%i_fig1.png', iCase);
-    saveas(h, figFolder+figName);
+    if savePlots
+        figName = sprintf('case%i_fig1.png', iCase);
+        saveas(h, figFolder+figName);
+    end
 
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,6 +85,8 @@ for iCase = 1:nCases
     plot(ABM_results(iCase).t, ABM_results(iCase).xMean, '-')
     set(gca, 'ColorOrderIndex', 1)
     plot(PDE_results(iCase).t, PDE_results(iCase).xMean, '--' )
+    set(gca, 'ColorOrderIndex', 1)
+    plot(PDE_results(iCase).t, PDE_results(iCase).meanODE, '-.' )
     xlabel('t')
     ylabel('\langle x(t) \rangle')
     title(sprintf('(a) mean tagged agent location'))
@@ -91,6 +98,8 @@ for iCase = 1:nCases
     plot(ABM_results(iCase).t, ABM_results(iCase).xSD, '-')
     set(gca, 'ColorOrderIndex', 1)
     plot(PDE_results(iCase).t, PDE_results(iCase).xSD, '--' )
+    set(gca, 'ColorOrderIndex', 1)
+    plot(PDE_results(iCase).t, PDE_results(iCase).sdODE, '-.' )
     xlabel('t')
     ylabel('\sigma_x(t)')
     title(sprintf('(a) std. dev. of tagged agent location'))
@@ -102,8 +111,11 @@ for iCase = 1:nCases
     end
     legend(leg_string, 'location', 'eastoutside')
 
-    figName = sprintf('case%i_fig2.png', iCase);
-    saveas(h, figFolder+figName);
+    
+    if savePlots
+        figName = sprintf('case%i_fig2.png', iCase);
+        saveas(h, figFolder+figName);
+    end
     
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -134,8 +146,11 @@ for iCase = 1:nCases
     grid on
     lgd = legend('Location', 'eastoutside');
 
-    figName = sprintf('case%i_fig3.png', iCase);
-    saveas(h, figFolder+figName);
+
+    if savePlots
+        figName = sprintf('case%i_fig3.png', iCase);
+        saveas(h, figFolder+figName);
+    end
 
 end
 
