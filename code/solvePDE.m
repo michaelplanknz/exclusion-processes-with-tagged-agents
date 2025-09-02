@@ -35,16 +35,23 @@ u0 = par.U0 * (abs(x) < par.x0 + 0.5 );
 % Number of sets of tagged agents (each with different starting location)   
 nTagSets = length(par.xTag);
 
+% Set time span for PDE solution
+tSpan = 0:1:par.tMax;
+
 % Allocate arrays for PDE solutions for u and p (for each tagged agent
 % set)
 u = zeros(nTagSets, nPoints);
 p = zeros(nTagSets, nPoints);
+xMean = zeros(nTagSets, length(tSpan));
+xSD = zeros(nTagSets, length(tSpan));
+xMed = zeros(nTagSets, length(tSpan));
+xq5 = zeros(nTagSets, length(tSpan));
+xq95 = zeros(nTagSets, length(tSpan));
+xODE = zeros(nTagSets, length(tSpan));
 
-% Set time span for PDE solution
-tSpan = 0:1:par.tMax;
 
 % Loop through tagged agent sets
-parfor iTagSet = 1:nTagSets
+for iTagSet = 1:nTagSets
 
     % Set IC for p for this starting location (+/- 0.5 for size of lattice
     % site)
@@ -84,6 +91,17 @@ parfor iTagSet = 1:nTagSets
         xMed(iTagSet, :) = xqs(:, 2)';
         xq95(iTagSet, :) = xqs(:, 3)';
 
+
+        % Temp code to solve PRE 2009 ODE for mean location
+        [Xi, Ti] = meshgrid(x , tSpan);
+        nRows = length(tSpan);
+        ux = [zeros(nRows, 1), (Ut(:, 3:end)-Ut(:, 1:end-2))/(2*dx), zeros(nRows, 1)];
+        x0 = par.xTag(iTagSet);
+        [~, Y] = ode45(@(t, y)meanODE(t, y, Xi, Ti, ux, par), tSpan, x0 );
+        xODE(iTagSet, :) = Y';
+        
+
+
     else
         % If tMax=0 just store initial condition for plotting
         u(iTagSet, :) = u0;
@@ -120,4 +138,5 @@ pdeResults.xMed = xMed;
 pdeResults.xq5 = xq5;
 pdeResults.xq95 = xq95;
 
+pdeResults.xODE = xODE;
 
