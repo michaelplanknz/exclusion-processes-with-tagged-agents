@@ -31,9 +31,9 @@ for iCase = 1:nCases
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Plot macroscopic density and tagged agent location PDFs
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    h = figure(3*iCase-2); 
-    h.Position = [       60         550        1045         380];
-    tiledlayout(1, 2, 'TileSpacing', 'compact');
+    h = figure(2*(iCase-1)+1); 
+    h.Position = [       60         550        1500         380];
+    tiledlayout(1, 3, 'TileSpacing', 'compact');
     nexttile;
     hold on
     plot(ABM_results(iCase).x, ABM_results(iCase).Um, '.')
@@ -41,7 +41,7 @@ for iCase = 1:nCases
     plot(PDE_results(iCase).x, PDE_results(iCase).u )
     xlabel('x')
     ylabel('u(x,t)')
-    title(sprintf('(a) agent density (t=%i)', par.tMax))
+    title(sprintf('(a) agent density at t=%i', par.tMax))
     legend('ABM', 'PDE')
     xlim(xRa)
     ylim([0 1])
@@ -57,7 +57,7 @@ for iCase = 1:nCases
     xline(par.xTag, '--')
     xlabel('x')
     ylabel('p(x,t)')
-    title(sprintf('(b) distribution of tagged agent location (t=%i)', par.tMax))
+    title(sprintf('(b) distribution of tagged agent location at t=%i', par.tMax))
     xlim(xRa)
     ylim([0 inf])
     grid on
@@ -67,6 +67,36 @@ for iCase = 1:nCases
          leg_string(iTagSet+nTagSets) = sprintf('PDE x0=%.0f', par.xTag(iTagSet));
     end
     legend(leg_string, 'Location', 'northwest')
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Plot median and quantiles of tagged agent location over time
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    cols = colororder;
+    nexttile;
+    hold on
+    
+    % Plot some dummy objects to create legend entries
+    clrDummy = [0 0 0];
+    plot(nan, nan, 'Color', clrDummy, 'LineStyle', '-', "LineWidth", 2, 'DisplayName', 'ABM (median)');
+    fill( nan, nan, clrDummy, 'FaceAlpha', 0.2, 'LineStyle', 'none', 'DisplayName', 'ABM (90%% PrI)');
+    plot(nan, nan, 'Color', clrDummy, 'LineStyle', '-', 'DisplayName', 'PDE (median)');
+    plot(nan, nan, 'Color', clrDummy, 'LineStyle', '--', 'DisplayName', 'PDE (90 %% PrI)');
+
+    % Plot actual graph
+    for iTagSet = 1:nTagSets
+        fill( [ABM_results(iCase).t, fliplr(ABM_results(iCase).t)], [ABM_results(iCase).xq5(iTagSet, :), fliplr(ABM_results(iCase).xq95(iTagSet, :))], cols(iTagSet, :), 'FaceAlpha', 0.2 , 'LineStyle', 'none', 'HandleVisibility', 'off' )
+        plot(ABM_results(iCase).t, ABM_results(iCase).xMed(iTagSet, :), 'Color', cols(iTagSet, :), 'LineStyle', '-', "LineWidth", 2, 'HandleVisibility', 'off')
+        plot(PDE_results(iCase).t, PDE_results(iCase).xMed(iTagSet, :), 'Color', cols(iTagSet, :), 'LineStyle', '-', 'HandleVisibility', 'off' )
+        plot(PDE_results(iCase).t, PDE_results(iCase).xq5(iTagSet, :), 'Color', cols(iTagSet, :), 'LineStyle', '--', 'HandleVisibility', 'off' )
+        plot(PDE_results(iCase).t, PDE_results(iCase).xq95(iTagSet, :), 'Color', cols(iTagSet, :), 'LineStyle', '--', 'HandleVisibility', 'off')
+    end
+    xlabel('t')
+    ylabel('x(t)')
+    grid on
+    %lgd = legend('Location', 'northwest');
+    title('(c) median (90% PrI) tagged agent location over time')
+
     
     if savePlots
         figName = sprintf('case%i_fig1.png', iCase);
@@ -74,10 +104,13 @@ for iCase = 1:nCases
     end
 
 
+
+
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Plot mean and S.D. of tagged agent location over time
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    h = figure(3*iCase-1); 
+    h = figure(2*(iCase-1)+2); 
     h.Position = [     113         518        1112         380];
     tiledlayout(1, 2, 'TileSpacing', 'compact');
     nexttile;
@@ -118,39 +151,8 @@ for iCase = 1:nCases
     end
     
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Plot median and quantiles of tagged agent location over time
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    cols = colororder;
-    h = figure(3*iCase); 
-    h.Position = [  66   398   789   478];
-    hold on
-    
-    % Plot some dummy objects to create legend entries
-    clrDummy = [0 0 0];
-    plot(nan, nan, 'Color', clrDummy, 'LineStyle', '-', "LineWidth", 2, 'DisplayName', 'ABM (median)');
-    fill( nan, nan, clrDummy, 'FaceAlpha', 0.2, 'LineStyle', 'none', 'DisplayName', 'ABM (90%% PrI)');
-    plot(nan, nan, 'Color', clrDummy, 'LineStyle', '-', 'DisplayName', 'PDE (median)');
-    plot(nan, nan, 'Color', clrDummy, 'LineStyle', '--', 'DisplayName', 'PDE (90 %% PrI)');
-
-    % Plot actual graph
-    for iTagSet = 1:nTagSets
-        fill( [ABM_results(iCase).t, fliplr(ABM_results(iCase).t)], [ABM_results(iCase).xq5(iTagSet, :), fliplr(ABM_results(iCase).xq95(iTagSet, :))], cols(iTagSet, :), 'FaceAlpha', 0.2 , 'LineStyle', 'none', 'HandleVisibility', 'off' )
-        plot(ABM_results(iCase).t, ABM_results(iCase).xMed(iTagSet, :), 'Color', cols(iTagSet, :), 'LineStyle', '-', "LineWidth", 2, 'HandleVisibility', 'off')
-        plot(PDE_results(iCase).t, PDE_results(iCase).xMed(iTagSet, :), 'Color', cols(iTagSet, :), 'LineStyle', '-', 'HandleVisibility', 'off' )
-        plot(PDE_results(iCase).t, PDE_results(iCase).xq5(iTagSet, :), 'Color', cols(iTagSet, :), 'LineStyle', '--', 'HandleVisibility', 'off' )
-        plot(PDE_results(iCase).t, PDE_results(iCase).xq95(iTagSet, :), 'Color', cols(iTagSet, :), 'LineStyle', '--', 'HandleVisibility', 'off')
-    end
-    xlabel('t')
-    ylabel('x(t)')
-    grid on
-    lgd = legend('Location', 'eastoutside');
 
 
-    if savePlots
-        figName = sprintf('case%i_fig3.png', iCase);
-        saveas(h, figFolder+figName);
-    end
 
 end
 
