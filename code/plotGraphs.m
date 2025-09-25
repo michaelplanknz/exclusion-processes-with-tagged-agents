@@ -21,17 +21,10 @@ nTagSets = length(par.xTag);
 xRa = [-100, 100];
 cols = parula(nTagSets);
 
-% Set up mean/SD figure for multiple cases
-h = figure(nCases+1); 
-h.Position = [    87    44   983   952];
-tiledlayout(nCases, 2, 'TileSpacing', 'compact');
-letters = ["(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(h)"];
 
-nCases = length(vArr);
-for iCase = 1:nCases
+for iCase = 1:5
     % Set case-specific parameters
-    par.v = vArr(iCase);
-    par.r = rArr(iCase);
+    par = getPar(iCase);
 
    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,18 +98,25 @@ for iCase = 1:nCases
 
     
     if savePlots
-        figName = sprintf('case%i_fig1.png', iCase);
+        figName = sprintf('case%i.png', iCase);
         saveas(h, figFolder+figName);
     end
+end
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Plot mean and S.D. of tagged agent location over time
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+h = figure(10); 
+h.Position = [    87    44   983   952];
+tiledlayout(4, 2, 'TileSpacing', 'compact');
+letters = ["(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(h)"];
 
+for iCase = 1:4
+    % Set case-specific parameters
+    par = getPar(iCase);
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Plot mean and S.D. of tagged agent location over time
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    h = figure(nCases+1); 
     nexttile;
     hold on
     plot(ABM_results(iCase).t, ABM_results(iCase).xMean, '-')
