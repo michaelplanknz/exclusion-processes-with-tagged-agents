@@ -47,8 +47,8 @@ xSD = zeros(nTagSets, length(tSpan));
 xMed = zeros(nTagSets, length(tSpan));
 xq5 = zeros(nTagSets, length(tSpan));
 xq95 = zeros(nTagSets, length(tSpan));
-xODE = zeros(nTagSets, length(tSpan));
-vODE = zeros(nTagSets, length(tSpan));
+meanODE = zeros(nTagSets, length(tSpan));
+sdODE = zeros(nTagSets, length(tSpan));
 
 % Loop through tagged agent sets
 for iTagSet = 1:nTagSets
@@ -91,19 +91,10 @@ for iTagSet = 1:nTagSets
         xMed(iTagSet, :) = xqs(:, 2)';
         xq95(iTagSet, :) = xqs(:, 3)';
 
-
         % Solve the ODEs for mean and variance in Simpson et al 2009
         % Make a grid of x and t values to allow evaluation of U and dU/dx
-        [Xi, Ti] = meshgrid(x , tSpan);
-        % Initial condition for mean and variance
-        x0 = [par.xTag(iTagSet); 0];
-        % Require variance to be non-negative
-        opts = odeset('NonNegative', 2);
-        % Solve ODEs
-        [~, Y] = ode45(@(t, y)meanVarODEs(t, y, Xi, Ti, Ut, par), tSpan, x0, opts );
-        % Record mean and s.d. over time
-        meanODE(iTagSet, :) = Y(:, 1)';
-        sdODE(iTagSet, :) = sqrt(Y(:, 2)');
+    	[meanODE(iTagSet, :), sdODE(iTagSet, :) ] = solveMeanVarODEs(x, tSpan, Ut, par.xTag(iTagSet), par);
+
    else
         % If tMax=0 just store initial condition for plotting
         u(iTagSet, :) = u0;
@@ -141,7 +132,6 @@ pdeResults.xSD = xSD;
 pdeResults.xMed = xMed;
 pdeResults.xq5 = xq5;
 pdeResults.xq95 = xq95;
-
 pdeResults.meanODE = meanODE;
 pdeResults.sdODE = sdODE;
 

@@ -2,7 +2,7 @@ clear
 close all
 
 % Set to true to save figures as .png files
-savePlots = false;
+savePlots = true;
 
 % Location to read results from
 fNameIn = "../results/results.mat";
@@ -21,6 +21,12 @@ nTagSets = length(par.xTag);
 xRa = [-100, 100];
 cols = parula(nTagSets);
 
+% Set up mean/SD figure for multiple cases
+h = figure(nCases+1); 
+h.Position = [    87    44   983   952];
+tiledlayout(nCases, 2, 'TileSpacing', 'compact');
+letters = ["(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(h)"];
+
 nCases = length(vArr);
 for iCase = 1:nCases
     % Set case-specific parameters
@@ -31,7 +37,7 @@ for iCase = 1:nCases
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Plot macroscopic density and tagged agent location PDFs
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    h = figure(2*(iCase-1)+1); 
+    h = figure(iCase); 
     h.Position = [       60         550        1500         380];
     tiledlayout(1, 3, 'TileSpacing', 'compact');
     nexttile;
@@ -40,7 +46,7 @@ for iCase = 1:nCases
     set(gca, 'ColorOrderIndex', 1)
     plot(PDE_results(iCase).x, PDE_results(iCase).u )
     xlabel('x')
-    ylabel('u(x,t)')
+    ylabel('C(x,t)')
     title(sprintf('(a) agent density at t=%i', par.tMax))
     legend('ABM', 'PDE')
     xlim(xRa)
@@ -56,7 +62,7 @@ for iCase = 1:nCases
     plot(PDE_results(iCase).x, PDE_results(iCase).p )
     xline(par.xTag, '--')
     xlabel('x')
-    ylabel('p(x,t)')
+    ylabel('P(x,t)')
     title(sprintf('(b) distribution of tagged agent location at t=%i', par.tMax))
     xlim(xRa)
     ylim([0 inf])
@@ -110,9 +116,7 @@ for iCase = 1:nCases
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Plot mean and S.D. of tagged agent location over time
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    h = figure(2*(iCase-1)+2); 
-    h.Position = [     113         518        1112         380];
-    tiledlayout(1, 2, 'TileSpacing', 'compact');
+    h = figure(nCases+1); 
     nexttile;
     hold on
     plot(ABM_results(iCase).t, ABM_results(iCase).xMean, '-')
@@ -122,7 +126,11 @@ for iCase = 1:nCases
     plot(PDE_results(iCase).t, PDE_results(iCase).meanODE, '-.' )
     xlabel('t')
     ylabel('\langle x(t) \rangle')
-    title(sprintf('(a) mean tagged agent location'))
+    if iCase == 1
+        title(sprintf('mean tagged agent location\n')+letters(2*iCase-1))
+    else
+        title(letters(2*iCase-1))
+    end
     grid on
 
     
@@ -135,25 +143,27 @@ for iCase = 1:nCases
     plot(PDE_results(iCase).t, PDE_results(iCase).sdODE, '-.' )
     xlabel('t')
     ylabel('\sigma_x(t)')
-    title(sprintf('(a) std. dev. of tagged agent location'))
+    if iCase == 1
+        title(sprintf('std. dev. of tagged agent location\n')+letters(2*iCase))
+    else
+        title(letters(2*iCase))
+    end
     grid on
-    leg_string = strings(2*nTagSets, 1);
+    leg_string = strings(3*nTagSets, 1);
     for iTagSet = 1:nTagSets
          leg_string(iTagSet) = sprintf('ABM x0=%.0f', par.xTag(iTagSet));
          leg_string(iTagSet+nTagSets) = sprintf('PDE x0=%.0f', par.xTag(iTagSet));
+         leg_string(iTagSet+2*nTagSets) = sprintf('SLH approx. x0=%.0f', par.xTag(iTagSet));
     end
-    legend(leg_string, 'location', 'eastoutside')
-
-    
-    if savePlots
-        figName = sprintf('case%i_fig2.png', iCase);
-        saveas(h, figFolder+figName);
+    if iCase == 1
+        legend(leg_string, 'location', 'eastoutside')
     end
-    
-
-
-
-
 end
 
+    
+if savePlots
+    figName = sprintf('supp_fig.png');
+    saveas(h, figFolder+figName);
+end
+    
 
