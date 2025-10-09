@@ -2,7 +2,7 @@
 
 This repository contains the code used for the article Continuum models describing probabilistic motion of tagged particles in exclusion processes.
 
-Results in the (preprint)[https://arxiv.org/abs/2509.25554] were produced using the version of this repository tagged v1.0. 
+Results in the [preprint](https://arxiv.org/abs/2509.25554) were produced using the version of this repository tagged v1.0. 
 
 
 ## Structure of the repository
