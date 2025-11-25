@@ -22,17 +22,27 @@ xRa = [-100, 100];
 cols = parula(nTagSets);
 
 
+letters = ["(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(h)", "(i)", "(j)", "(k)", "(l)"];
+iLetter = 1;
+
+h = figure(1); 
+h.Position = [      60           5        1189         991];
+tiledlayout(4, 3, 'TileSpacing', 'compact');
+
 for iCase = 1:5
     % Set case-specific parameters
     par = getPar(iCase);
-
    
+    % Case 5 is a separate figure
+    if iCase == 5
+        h = figure(2); 
+        h.Position = [       60         550        1500         380];
+        tiledlayout(1, 3, 'TileSpacing', 'compact');
+    end
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Plot macroscopic density and tagged agent location PDFs
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    h = figure(iCase); 
-    h.Position = [       60         550        1500         380];
-    tiledlayout(1, 3, 'TileSpacing', 'compact');
     nexttile;
     hold on
     plot(ABM_results(iCase).x, ABM_results(iCase).Um, '.')
@@ -40,12 +50,22 @@ for iCase = 1:5
     plot(PDE_results(iCase).x, PDE_results(iCase).u )
     xlabel('x')
     ylabel('C(x,t)')
-    title(sprintf('(a) agent density at t=%i', par.tMax))
-    legend('ABM', 'PDE')
+    if iCase == 1
+        ttl = sprintf('Agent density at t=%i\n%s', par.tMax, letters(iLetter));
+        iLetter = iLetter+1;
+    elseif iCase == 5
+        ttl = sprintf('(a) agent density at t=%i', par.tMax);
+    else
+        ttl = letters(iLetter);
+        iLetter = iLetter+1;
+    end
+    title(ttl);
     xlim(xRa)
     ylim([0 1])
     grid on
-    legend(["ABM", "PDE"], 'location', 'northwest')
+    if iCase == 1 | iCase == 5
+        legend(["ABM", "PDE"], 'location', 'northwest')
+    end
 
 
     nexttile;
@@ -56,16 +76,27 @@ for iCase = 1:5
     xline(par.xTag, '--')
     xlabel('x')
     ylabel('P(x,t)')
-    title(sprintf('(b) distribution of tagged agent location at t=%i', par.tMax))
+    if iCase == 1
+        ttl = sprintf('Distribution of tagged agent location at t=%i\n%s', par.tMax, letters(iLetter));
+        iLetter = iLetter+1;
+    elseif iCase == 5
+        ttl = sprintf('(b) distribution of tagged agent location at t=%i', par.tMax);
+    else
+        ttl = letters(iLetter);
+        iLetter = iLetter+1;
+    end
+    title(ttl);
     xlim(xRa)
     ylim([0 inf])
     grid on
-    leg_string = strings(2*nTagSets, 1);
-    for iTagSet = 1:nTagSets
-         leg_string(iTagSet) = sprintf('ABM x0=%.0f', par.xTag(iTagSet));
-         leg_string(iTagSet+nTagSets) = sprintf('PDE x0=%.0f', par.xTag(iTagSet));
+    if iCase == 1 | iCase == 5
+        leg_string = strings(2*nTagSets, 1);
+        for iTagSet = 1:nTagSets
+             leg_string(iTagSet) = sprintf('ABM x0=%.0f', par.xTag(iTagSet));
+             leg_string(iTagSet+nTagSets) = sprintf('PDE x0=%.0f', par.xTag(iTagSet));
+        end
+        legend(leg_string, 'Location', 'northwest')
     end
-    legend(leg_string, 'Location', 'northwest')
 
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,13 +125,26 @@ for iCase = 1:5
     ylabel('x(t)')
     grid on
     %lgd = legend('Location', 'northwest');
-    title('(c) median (90% PrI) tagged agent location over time')
-
-    
-    if savePlots
-        figName = sprintf('case%i.png', iCase);
-        saveas(h, figFolder+figName);
+    if iCase == 1
+        ttl = sprintf('Median (90%% PrI) tagged agent location over time\n%s', letters(iLetter));
+        iLetter = iLetter+1;
+    elseif iCase == 5
+        ttl = '(c) median (90% PrI) tagged agent location over time';
+    else
+        ttl = letters(iLetter);
+        iLetter = iLetter+1;
     end
+    title(ttl);
+end
+
+
+if savePlots
+    h = figure(1);
+    figName = 'all_cases.png';
+    saveas(h, figFolder+figName);
+    h = figure(2);
+    figName = 'supp_case.png';
+    saveas(h, figFolder+figName);
 end
 
 
@@ -111,7 +155,6 @@ end
 h = figure(10); 
 h.Position = [    87    44   983   952];
 tiledlayout(4, 2, 'TileSpacing', 'compact');
-letters = ["(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)", "(h)"];
 
 for iCase = 1:4
     % Set case-specific parameters
