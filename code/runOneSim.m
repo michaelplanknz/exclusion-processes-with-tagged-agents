@@ -24,7 +24,7 @@ Pmov = 4*par.D;
 Pprol = par.r;
 rhox = 2*par.v/Pmov;
 
-% Make a grid of lattice site coorindates
+% Make a grid of lattice site coordinates
 xa = -par.xMax:par.xMax;
 ya = 0:par.yMax;
 [XA, YA] = meshgrid(xa, ya);
