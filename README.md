@@ -4,7 +4,7 @@ This repository contains the code used for the article [Continuum models describ
 
 ## Version history
 
-Results in version 1 of the [preprint](https://arxiv.org/abs/2509.25554v1) were produced using the version of this repository tagged v1.0. 
+Results in [version 1](https://arxiv.org/abs/2509.25554v1) of the preprint were produced using the version of this repository tagged v1.0. 
 
 Results in the [final published version](https://dx.doi.org/10.1103/lzqy-n5mw) were produced using the version tagged v1.1, which is also [archived](https://zenodo.org/records/18238920) as a Zenodo repository.
 
